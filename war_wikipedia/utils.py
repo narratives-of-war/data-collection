@@ -64,14 +64,16 @@ def collect_content(conflict, content_dir, meta_dir):
     :param type: If "id", assumes 'conflict' is the conflict page's ID.
         If 'title', assumes it is a title instead.
     :return: 2 if both the content file and meta file were created, 1 if only
-        the content file.
+        the content file. Returns None if the conflict could not be collected.
     """
     try:
         war_page = wikipedia.page(conflict)
-    except wikipedia.exceptions.PageError:
+    except:
         # Titles don't have underscores or hyphens, they use spaces..
         title = re.sub(r'[-_]', ' ', conflict)
         war_page = wikipedia.page(title=title)
+    except:
+        return None
 
     content_file = open(os.path.join(content_dir, conflict + ".txt"), "w")
     meta_file = open(os.path.join(meta_dir, conflict + ".txt"), "w")
