@@ -49,7 +49,7 @@ def collect_ids_by_category(century_category):
     return conflicts_from_century
 
 
-def collect_content(conflict, content_dir, meta_dir, type="id"):
+def collect_content(conflict, content_dir, meta_dir):
     """
     Given a war id, creates:
     - A text file containing belligerents and casualties
@@ -66,12 +66,12 @@ def collect_content(conflict, content_dir, meta_dir, type="id"):
     :return: 2 if both the content file and meta file were created, 1 if only
         the content file.
     """
-    if type == "id":
+    try:
         war_page = wikipedia.page(conflict)
-    else:
-        # Titles don't have underscores, they have hyphens.
-        war_page = wikipedia.page(title=conflict)
-        conflict = conflict.replace(' ', '_')
+    except wikipedia.exceptions.PageError:
+        # Titles don't have underscores or hyphens, they use spaces..
+        title = re.sub(r'[-_]', ' ', conflict)
+        war_page = wikipedia.page(title=title)
 
     content_file = open(os.path.join(content_dir, conflict + ".txt"), "w")
     meta_file = open(os.path.join(meta_dir, conflict + ".txt"), "w")
