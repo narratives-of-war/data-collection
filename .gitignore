@@ -10,6 +10,9 @@ __pycache__/
 # celery beat schedule file
 celerybeat-schedule
 
+# Data
+data/
+
 # Distribution / packaging
 .Python
 env/
