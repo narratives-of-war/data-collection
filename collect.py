@@ -37,29 +37,34 @@ def main():
         print()
         sys.exit(0)
 
-    # Collect IDs of all conflict eras in the 20th century:
-    conflict_by_era_categories = collect_ids_by_category(TWENTIETH_CENTURY_CATEGORY)
-    conflict_by_era_categories += collect_ids_by_category(TWENTY_FIRST_CENTURY_CATEGORY)
-    print(len(conflict_by_era_categories), "conflicts eras found!")
 
-    # Collect IDs of all conflicts from every era:
     conflict_ids = []
     print("Collecting conflict IDs from eras:")
 
-    conflict_ids_file = os.path.join(args.save_dir, "conflict_ids.txt", "w")
+    conflict_ids_file = os.path.join(args.save_dir, "conflict_ids.txt")
     if not os.path.exists(conflict_ids_file):
+
+        # Collect IDs of all conflict eras in the 20th century:
+        conflict_by_era_categories = collect_ids_by_category(TWENTIETH_CENTURY_CATEGORY)
+        conflict_by_era_categories += collect_ids_by_category(TWENTY_FIRST_CENTURY_CATEGORY)
+        print(len(conflict_by_era_categories), "conflicts eras found!")
+
+        # Collect IDs of all conflicts from every era:
         for era_category in tqdm(conflict_by_era_categories):
             conflict_ids += collect_ids_by_category(era_category)
         print(len(conflict_ids), "conflicts found!")
         print("Storing conflict IDs:")
-        with open(os.path.join(args.save_dir, "conflict_ids.txt", "w")) as f:
+
+        # Store them as it takes time to collect.
+        with open(conflict_ids_file, 'w') as f:
             for c in conflict_ids:
                 print(c, file=f)
-
+            f.close()
     else:
         print("Cached conflict ids detected; collecting now:")
-        with open(os.path.join(args.save_dir, "conflict_ids.txt", "w")) as f:
+        with open(conflict_ids_file, 'r') as f:
             conflict_ids = f.readlines()
+            conflict_ids = list(map(quote, conflict_ids))
 
     print("Collecting", len(conflict_ids),  "conflicts:")
 
