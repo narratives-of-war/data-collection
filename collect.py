@@ -95,7 +95,7 @@ def main():
     if not os.path.exists(meta_dir):
         os.mkdir(meta_dir)
 
-    for conflict_id in tqdm(conflict_ids[:5]):
+    for conflict_id in tqdm(conflict_ids):
         collect_content(conflict_id, content_dir, meta_dir)
 
     print("Data collected!")
