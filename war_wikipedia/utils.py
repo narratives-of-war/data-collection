@@ -10,17 +10,19 @@ TWENTIETH_CENTURY_CATEGORY = "Category:20th-century_conflicts_by_year"
 TWENTY_FIRST_CENTURY_CATEGORY = "Category:21st-century_conflicts_by_year"
 
 
-def conflict_years_by_century_category(century_category):
+def collect_ids_by_category(century_category):
     """
     Wikipedia has conflict categories spanning from 1901 to present day:
     https://en.wikipedia.org/wiki/Category:20th-century_conflicts_by_year
     https://en.wikipedia.org/wiki/Category:21st-century_conflicts_by_year
 
-    The webpages themselves contain links to categories of the form
+    The web pages themselves contain links to categories of the form
     Category:Conflicts_in_XXXX for years 1901 to 2018.
 
     This method collects each Category:Conflict_in_XXXX for the 20th and
     21st centuries.
+
+    :return A list of Wikipedia IDs, which could be more categories themselves!
     """
 
     # Collect the html
@@ -34,7 +36,7 @@ def conflict_years_by_century_category(century_category):
     # Each category page has a single mw-category or an ID of mw-pages
     # Ignore category pages that don't include either
     subcategories = page_soup.findAll("div", attrs={"class": "mw-category"})
-    conflicts_from_year = []
+    conflicts_from_century = []
     if len(subcategories) == 0:
         subcategories = page_soup.findAll("div", attrs={"id": "mw-pages"})
 
@@ -42,9 +44,9 @@ def conflict_years_by_century_category(century_category):
     for subcategory in subcategories:
         for a in subcategory.findAll("a", href=True):
             # href has the form /wiki/Category:XXXXXXXX
-            conflicts_from_year.append(a['href'].split("/")[-1])
+            conflicts_from_century.append(a['href'].split("/")[-1])
 
-    return conflicts_from_year
+    return conflicts_from_century
 
 
 def collect_content(conflict, content_dir, meta_dir, type="id"):
@@ -52,7 +54,7 @@ def collect_content(conflict, content_dir, meta_dir, type="id"):
     Given a war id, creates:
     - A text file containing belligerents and casualties
     - A text file containing raw wikipedia content
-    :param conflict_id: string
+    :param conflict: string
         The unique string found after /wiki/ on wikipedia articles.
     :param content_dir: path
         The directory to store the content file
