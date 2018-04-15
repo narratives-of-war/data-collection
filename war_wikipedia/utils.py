@@ -71,11 +71,14 @@ def collect_content(conflict, content_dir, meta_dir):
     try:
         war_page = wikipedia.page(conflict)
     except:
-        # Titles don't have underscores or hyphens, they use spaces..
-        title = re.sub(r'[-_]', ' ', conflict)
-        war_page = wikipedia.page(title=title)
+        try:
+            # Titles don't have underscores or hyphens, they use spaces.
+            title = re.sub(r'[-_]', ' ', conflict)
+            war_page = wikipedia.page(title=title)
+        except:
+            pass  # Failed to retrieve the document.
 
-    if war_page == None:
+    if war_page is None:
         return None
 
     content_file = open(os.path.join(content_dir, conflict + ".txt"), "w")
