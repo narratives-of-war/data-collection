@@ -106,6 +106,5 @@ def main():
         print("Collection ended early.")
 
 
-
 if __name__ == "__main__":
     main()
