@@ -82,7 +82,6 @@ def main():
     else:
         conflict_ids_file = args.conflicts_path
 
-    print("Collecting", len(conflict_ids),  "conflicts:")
     with open(conflict_ids_file, 'r') as f:
         conflict_ids = f.readlines()
 
@@ -95,10 +94,17 @@ def main():
     if not os.path.exists(meta_dir):
         os.mkdir(meta_dir)
 
-    for conflict_id in tqdm(conflict_ids):  # TODO: Get rid of the limit
-        collect_content(conflict_id, content_dir, meta_dir)
+    conflict_ids = set(conflict_ids)  # Remove redundant entries.
+    print("Collecting", len(conflict_ids),  "non-redundant conflicts:")
 
-    print("Data collected!")
+    try:
+        for conflict_id in tqdm(conflict_ids):
+            collect_content(conflict_id, content_dir, meta_dir)
+
+        print("Data collected!")
+    except KeyboardInterrupt:
+        print("Collection ended early.")
+
 
 
 if __name__ == "__main__":
