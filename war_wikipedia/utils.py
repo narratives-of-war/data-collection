@@ -81,8 +81,8 @@ def collect_content(conflict, content_dir, meta_dir):
     if war_page is None:
         return None
 
-    content_file = open(os.path.join(content_dir, conflict + ".txt"), "w")
-    meta_file = open(os.path.join(meta_dir, conflict + ".txt"), "w")
+    content_file = open(os.path.join(content_dir, conflict.strip(), ".txt"), "w")
+    meta_file = open(os.path.join(meta_dir, conflict.strip(), ".txt"), "w")
 
     war_soup = BeautifulSoup(war_page.html(), "lxml")
     print(war_page.content, file=content_file)
