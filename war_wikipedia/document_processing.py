@@ -6,12 +6,15 @@ def document_to_json(title, path):
     # === Section Title ===
     # Where the number of ='s determine the section type.
     #
-    # We treat sections indifferently when building the JSON:
-    # sections: {
-    #    "heading": heading from === Section Title ===
-    #    "text": text from the section
-    #
-
+    # We treat sections indifferently when building the JSON, which
+    # results in
+    # { "title":
+    #   "sections": [
+    #     { "heading": (heading from === Section Title ===)
+    #       "text": (text from the section) }
+    #              ...
+    #    ]
+    # }
 
     with open(path, 'r') as f:
         lines = f.readlines()
