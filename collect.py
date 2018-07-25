@@ -10,6 +10,7 @@ from war_wikipedia import (TWENTIETH_CENTURY_CATEGORY,
                            TWENTY_FIRST_CENTURY_CATEGORY, collect_content,
                            collect_ids_by_category)
 
+# TODO: Deprecate this?
 
 def main():
     parser = argparse.ArgumentParser(

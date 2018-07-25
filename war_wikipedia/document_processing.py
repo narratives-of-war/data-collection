@@ -1,14 +1,13 @@
 """ Conversion from raw Wikipedia to JSON.
 """
 
-def document_to_json(title, path):
+def document_to_json(content, title=None):
     """
     Given the title and full path to the raw Wikipedia content as a result of
     Wikipedia.page(pageid=...), returns a JSON-formatted version of the page.
 
-    Wikipedia articles will have sections preceeded by
-    === Section Title ===
-    Where the number of ='s determine the section type.
+    Wikipedia articles will have sections preceeded by '=== Section Title ==='
+    where the number of ='s determine the section type.
 
     We treat sections indifferently when building the JSON, which
     results in
@@ -24,13 +23,9 @@ def document_to_json(title, path):
     Parameters
     -----------
     path : ``str`` The full path to the raw Wikipedia content.
-    title : ``str``, optional (default=``None``) The name of the conflict. If None, will take the name of the file
-        preceding '.' instead.
+    title : ``str``, (defaule=``None``) The name of the conflict to be preserved in the JSON.
     """
-
-    with open(path, 'r') as file:
-        lines = file.readlines()
-
+    lines = content.split('\n')
     sections = []
     headings = []
 
@@ -38,9 +33,7 @@ def document_to_json(title, path):
     current_heading = "Introduction"
     current_section = []
     for line in lines:
-
-        # Reached a section header.
-        if line.startswith("="):
+        if line.startswith("="):  # Reached a section header.
             headings.append(current_heading)
             sections.append(current_section)
             current_heading = line.replace("=", "")
