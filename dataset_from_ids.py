@@ -13,8 +13,12 @@ from war_wikipedia import document_to_json
 
 
 """
-Given a .jsonl of the form where each line is of the form {"id": int, "title": str},
-retrieves the Wikipedia page and saves it as it's own JSON file. All other fields will be ignored.
+Given a .jsonl of the form where each line is of the form
+
+{"id": int, "title": str}
+
+retrieves the Wikipedia page and saves it as it's own JSON file.
+All other fields will be ignored.
 """
 
 
@@ -25,13 +29,25 @@ def main():
             os.path.dirname(os.path.realpath(__file__)))))
     parser.add_argument("--data-path", type=str,
                         default=os.path.join(project_root, "conflicts.jsonl"),
-                        help="Path to the .jsonl file containing all conflicts and their IDs.")
+                        help="Path to the .jsonl file containing all conflicts"
+                             "and their IDs.")
     parser.add_argument("--save-dir", type=str,
                         default=os.path.join(project_root, "data"),
                         help="Directory to save content content as"
                              "text files.")
     args = parser.parse_args()
     assert os.path.exists(args.data_path), "Invalid path {}".format(args.data_path)
+    try:
+        if os.path.exists(args.save_dir):
+            input("Save directory {} already exists. Press <Enter> "
+                  "to clear, overwrite and continue , or "
+                  "<Ctrl-c> to abort.".format(args.save_dir))
+            shutil.rmtree(args.save_dir)
+        os.makedirs(args.save_dir)
+    except KeyboardInterrupt:
+        print()
+        sys.exit(0)
+
     print("Collecting pages:")
     for line in tqdm(open(args.data_path, 'r')):
         conflict_info = json.loads(line)
@@ -42,10 +58,12 @@ def main():
 
         # Collect and process the raw Wikipedia content.
         conflict_page = wikipedia.page(pageid=conflict_id)
-        conflict_as_json = document_to_json(conflict_page.content, title=conflict_title)
+        conflict_as_json = document_to_json(conflict_page.content,
+                                            title=conflict_title)
 
         # Save the conflict as a json file.
-        with open(os.path.join(args.save_dir, conflict_title + ".json")) as outfile:
+        conflict_path = os.path.join(args.save_dir, conflict_title + ".json")
+        with open(conflict_path, 'w') as outfile:
             json.dump(conflict_as_json, outfile, sort_keys=True, indent=4)
 
 
