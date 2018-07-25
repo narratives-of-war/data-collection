@@ -1,26 +1,26 @@
 import argparse
-import json
 import os
 import shutil
 import sys
-
-from tqdm import tqdm
 from urllib.parse import unquote
 
-from war_wikipedia import *
+from tqdm import tqdm
+
+from war_wikipedia import (TWENTIETH_CENTURY_CATEGORY,
+                           TWENTY_FIRST_CENTURY_CATEGORY, collect_content,
+                           collect_ids_by_category)
 
 
 def main():
     parser = argparse.ArgumentParser(
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+            formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     project_root = os.path.abspath(os.path.realpath(os.path.join(
-        os.path.dirname(os.path.realpath(__file__)))))
-
+            os.path.dirname(os.path.realpath(__file__)))))
     parser.add_argument("--conflicts-path", type=str,
                         help="Path to the list of conflict IDs to collect from.")
     parser.add_argument("--save-dir", type=str,
                         default=os.path.join(
-                            project_root, "data"),
+                                project_root, "data"),
                         help="Directory to save content content as"
                              "text files.")
     args = parser.parse_args()
@@ -68,22 +68,22 @@ def main():
 
         # Store them as it takes time to collect.
         conflict_ids_file = os.path.join(args.save_dir, "conflict_ids.txt")
-        with open(conflict_ids_file, 'w') as f:
-            for c in conflict_ids:
-                print(c, file=f)
-            f.close()
+        with open(conflict_ids_file, 'w') as file:
+            for conflict_id in conflict_ids:
+                print(conflict_id, file=file)
+            file.close()
 
         # Store the categories in case they're useful.
         category_ids_file = os.path.join(args.save_dir, "category_ids.txt")
-        with open(category_ids_file, 'w') as f:
-            for c in categories:
-                print(c, file=f)
-            f.close()
+        with open(category_ids_file, 'w') as file:
+            for category in categories:
+                print(category, file=file)
+            file.close()
     else:
         conflict_ids_file = args.conflicts_path
 
-    with open(conflict_ids_file, 'r') as f:
-        conflict_ids = f.readlines()
+    with open(conflict_ids_file, 'r') as file:
+        conflict_ids = file.readlines()
 
     # Directories for content and info boxes.
     content_dir = os.path.join(args.save_dir, "content")
@@ -95,12 +95,10 @@ def main():
         os.mkdir(meta_dir)
 
     conflict_ids = set(conflict_ids)  # Remove redundant entries.
-    print("Collecting", len(conflict_ids),  "non-redundant conflicts:")
-
+    print("Collecting", len(conflict_ids), "non-redundant conflicts:")
     try:
         for conflict_id in tqdm(conflict_ids):
             collect_content(conflict_id, content_dir, meta_dir)
-
         print("Data collected!")
     except KeyboardInterrupt:
         print("Collection ended early.")
